@@ -2,7 +2,7 @@
 <html ng-app="landminemanApp">
   <head>
     <meta charset="utf-8">
-    <title>landmine man</title>
+    <title></title>
     <link rel="stylesheet" href="/stylesheets/style.css" charset="utf-8">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" media="screen" title="no title" charset="utf-8">
     <script scr="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
@@ -10,6 +10,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-route.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-rc.0/angular-cookies.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <base href="/">
   </head>
@@ -31,17 +32,18 @@
           <ul class="nav navbar-nav">
             <li><a href="/">home</a></li>
             <li><a href="/about">about</a></li>
-            <li><a href="/leaderboard">leaderboard</a></li>
-            <li><a href="/auth/facebook" ng-hide="user.firstName" target="_self">facebook login</a></li>
+            <li><a href="/leaders">leaderboard</a></li>
+            <li><a href="/auth/facebook" target="_self" ng-if="userName != undefined">facebook login</a></li>
+            <li><a href="/clear-api" target="_self" ng-model="clearstorage" ng-if="userName == undefined">logout</a></li>
           </ul>
         </div>
       </div>
     </nav>
     <div ng-view class="view-animate"></div>
-
     <script src="/javascripts/module.js"></script>
     <script src="/javascripts/routes.js"></script>
     <script src="/javascripts/controllers.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <!-- <script src="/javascripts/directives.js"></script> -->
     <!-- <script src="/javascripts/services."></script>-->
   </body>

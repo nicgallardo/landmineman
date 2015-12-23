@@ -6,7 +6,11 @@ app.config(function($routeProvider, $locationProvider){
       })
       .when('/about', {
         templateUrl: 'partials/about.html',
-        controller: 'AboutController',
+        controller: 'AboutController'
+      })
+      .when('/leaders', {
+        templateUrl: 'partials/leaders.html',
+        controller: 'LeadersController'
       })
       .otherwise({redirectTo:'/'});
       $locationProvider.html5Mode(true);

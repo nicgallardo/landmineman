@@ -11,3 +11,32 @@ a {
   height: 10000px;
   background-color: red;
 }
+
+.bg-bombyellow {
+  background-color: #FBD01B;
+}
+
+.bg-bombred {
+  background-color: #D03F27;
+}
+
+.font-bombyellow {
+  color: #FBD01B;
+}
+
+.font-bombred {
+  color: #D03F27;
+}
+
+.leader-banner {
+  margin-top: 30px;
+}
+
+.leaderboard-row {
+  padding: 6px;
+  background-color: #999999;
+}
+.leaderboard-row:nth-of-type(odd) {
+  padding: 6px;
+  background-color: #e6e6e6;
+}
