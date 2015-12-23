@@ -15,7 +15,7 @@
     <base href="/">
   </head>
   <body>
-    <nav class="navbar navbar-default">
+    <nav class="navbar navbar-default" ng-controller="NavController">
       <div class="container-fluid">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
@@ -33,13 +33,15 @@
             <li><a href="/">home</a></li>
             <li><a href="/about">about</a></li>
             <li><a href="/leaders">leaderboard</a></li>
-            <li><a href="/auth/facebook" target="_self" ng-if="userName != undefined">facebook login</a></li>
-            <li><a href="/clear-api" target="_self" ng-model="clearstorage" ng-if="userName == undefined">logout</a></li>
+            <li><a href="/logout" target="_self" ng-if="userName != undefined">logout</a></li>
+            <li><a href="/auth/facebook" target="_self" ng-if="userName == undefined">facebook login</a></li>
           </ul>
         </div>
       </div>
     </nav>
-    <div ng-view class="view-animate"></div>
+
+    <div ng-view></div>
+
     <script src="/javascripts/module.js"></script>
     <script src="/javascripts/routes.js"></script>
     <script src="/javascripts/controllers.js"></script>

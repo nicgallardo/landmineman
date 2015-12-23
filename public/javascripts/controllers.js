@@ -2,15 +2,34 @@ app.controller('IndexController', ['$scope', function($scope) {
 
   }]);
 
-app.controller('HomeController', ['$scope', '$window', '$http', '$cookies', function($scope, $window, $http, $cookies) {
+app.controller('HomeController', ['$scope', '$http', function($scope, $http) {
+    $http.get('/me').then(function(response){
+      // localStorage.setItem('fbID', response.data.fbID);
+      // localStorage.setItem('firstName', response.data.firstName);
+      $scope.userName = localStorage.getItem("firstName");
+    }, function (err) {
+      // localStorage.removeItem('fbID');
+      // localStorage.removeItem('firstName');
+      // $scope.userName = null;
+
+    })
+}]);
+
+app.controller('NavController', ['$scope', '$window', '$http', function($scope, $window, $http) {
     var test = $window.navigator.userAgent;
-    $http.get('/user-api').then(function(response){
-      console.log(response.data);
+
+    $http.get('/me').then(function(response){
+      // console.log(response.data);
       localStorage.setItem('fbID', response.data.fbID);
       localStorage.setItem('firstName', response.data.firstName);
+      $scope.userName = localStorage.getItem("firstName");
+
+    }, function (err) {
+      localStorage.removeItem('fbID');
+      localStorage.removeItem('firstName');
+      $scope.userName = null;
+
     })
-    $scope.userName = localStorage.getItem("firstName");
-    // $scope.clearstorage = localStorage.
 }]);
 
 app.controller('AboutController', ['$scope', "$http", function($scope, $http) {

@@ -20,6 +20,12 @@ var routes = require('./routes/index');
 
 var app = express();
 
+app.set('trust proxy', 1)
+
+app.use(cookieSession({
+  name: 'session',
+  keys: ['key1', 'key2']
+}))
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -34,7 +40,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 
-var userFirstName, userLastName, userFBid, userData = {};
+var userFirstName, userLastName, userFBid;
 
 passport.use(new FacebookStrategy({
     clientID: process.env.FACEBOOK_APP_ID,
@@ -49,10 +55,6 @@ passport.use(new FacebookStrategy({
         userFirstName = fullName[0];
         userLastName = fullName[1];
         userFBid = profile.id;
-
-        userData["fbID"] = userFBid;
-        userData["firstName"] = userFirstName;
-        userData["lastName"] = userLastName;
 
 
     var userPhoto = profile.photos[0].value;
@@ -82,8 +84,12 @@ app.get('/auth/facebook/callback',
     res.redirect('/');
 });
 
-app.get('/user-api', function(req, res){
-  res.json(userData)
+app.get('/me', function(req, res){
+  if (req.user) {
+    res.json(req.user)
+  } else {
+    res.sendStatus(403)
+  }
 })
 
 app.get('/auth/facebook',
