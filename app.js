@@ -64,7 +64,8 @@ passport.use(new FacebookStrategy({
             fbid: profile.id,
             firstname: userFirstName,
             lastname: userLastName,
-            profilepic: userPhoto
+            profilepic: userPhoto,
+            points: 0,
           }, function (err, doc) {
             if (err) throw err;
           });
@@ -86,7 +87,9 @@ app.get('/auth/facebook/callback',
 
 app.get('/me', function(req, res){
   if (req.user) {
-    res.json(req.user)
+    users.findOne({fbid: req.user.facebookId}).on('success', function(doc){
+      res.json(doc)
+    })
   } else {
     res.sendStatus(403)
   }
@@ -119,7 +122,7 @@ app.use(passport.session());
 app.use('/', routes);
 
 app.get('*', function(req, res){
-    res.redirect('/index.html');
+  res.sendFile('index.html', { root: __dirname + '/public/' });
 });
 
 // catch 404 and forward to error handler

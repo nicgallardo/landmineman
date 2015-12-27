@@ -2,16 +2,12 @@ app.controller('IndexController', ['$scope', function($scope) {
 
   }]);
 
-app.controller('HomeController', ['$scope', '$http', function($scope, $http) {
+app.controller('HomeController', ['$scope', '$window', '$http', function($scope, $window,$http) {
+    var usersFirst = localStorage.getItem("firstname");
+    //needs this for the nav show hide logic. not sure why?! TODO: FIX!
     $http.get('/me').then(function(response){
-      // localStorage.setItem('fbID', response.data.fbID);
-      // localStorage.setItem('firstName', response.data.firstName);
       $scope.userName = localStorage.getItem("firstName");
     }, function (err) {
-      // localStorage.removeItem('fbID');
-      // localStorage.removeItem('firstName');
-      // $scope.userName = null;
-
     })
 }]);
 
@@ -19,14 +15,15 @@ app.controller('NavController', ['$scope', '$window', '$http', function($scope, 
     var test = $window.navigator.userAgent;
 
     $http.get('/me').then(function(response){
-      // console.log(response.data);
-      localStorage.setItem('fbID', response.data.fbID);
-      localStorage.setItem('firstName', response.data.firstName);
+      localStorage.setItem('fbID', response.data.facebookId);
+      localStorage.setItem('firstName', response.data.firstname);
+      localStorage.setItem('points', response.data.points)
       $scope.userName = localStorage.getItem("firstName");
 
     }, function (err) {
       localStorage.removeItem('fbID');
       localStorage.removeItem('firstName');
+      localStorage.removeItem('points');
       $scope.userName = null;
 
     })
@@ -38,10 +35,13 @@ app.controller('AboutController', ['$scope', "$http", function($scope, $http) {
 
 app.controller('LeadersController', ['$scope', function($scope) {
   var socket = io();
+  // send a message
   socket.on('users', function(data){
-    console.log(data);
     $scope.users = data;
     $scope.$apply();
   })
-    $scope.greeting = 'Welcome to Landmine Man!';
+  socket.emit('leader', 'dummy');
+  $scope.greeting = 'Welcome to Landmine Man!';
+   //learning experince 
+  // register a destroy hook that clears all listeners - check the learning experience
 }]);
