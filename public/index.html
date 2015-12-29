@@ -31,7 +31,7 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav">
             <li><a href="/">home</a></li>
-            <li><a href="/game" ng-if="userName != undefined">game</a></li>
+            <li><a href="/game">game</a></li>
             <li><a href="/about">about</a></li>
             <li><a href="/leaders">leaderboard</a></li>
             <li><a href="/logout" target="_self" ng-if="userName != undefined">logout</a></li>
@@ -42,12 +42,12 @@
     </nav>
 
     <div ng-view></div>
-
     <script src="/javascripts/module.js"></script>
     <script src="/javascripts/routes.js"></script>
     <script src="/javascripts/controllers.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
+    <script src="/javascripts/factory.js"></script>
     <!-- <script src="/javascripts/directives.js"></script> -->
     <!-- <script src="/javascripts/services."></script>-->
+    <script src="/socket.io/socket.io.js"></script>
   </body>
 </html>
