@@ -41,7 +41,27 @@ app.controller('LeadersController', ['$scope', function($scope) {
     $scope.$apply();
   })
   socket.emit('leader', 'dummy');
-  $scope.greeting = 'Welcome to Landmine Man!';
-   //learning experince 
+   //learning experince
   // register a destroy hook that clears all listeners - check the learning experience
+}]);
+
+app.controller('GamesController', ['$scope', '$http',  function($scope, $http) {
+  $scope.count = 0;
+  $scope.increment = function(){
+
+    $scope.count++;
+
+    var dataObj = {
+      score : $scope.count,
+    }
+
+    $http.post('/api/v1/add-point', dataObj).
+    success(function(data) {
+        console.log("posted successfully: ", data);
+    }).error(function(data) {
+        console.error("error in posting: ", data);
+    })
+
+  }
+
 }]);

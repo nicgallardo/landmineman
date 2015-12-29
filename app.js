@@ -85,15 +85,6 @@ app.get('/auth/facebook/callback',
     res.redirect('/');
 });
 
-app.get('/me', function(req, res){
-  if (req.user) {
-    users.findOne({fbid: req.user.facebookId}).on('success', function(doc){
-      res.json(doc)
-    })
-  } else {
-    res.sendStatus(403)
-  }
-})
 
 app.get('/auth/facebook',
   passport.authenticate('facebook'));
@@ -118,8 +109,27 @@ app.use(passport.session());
 //   res.locals.user = req.user
 //   next()
 // })
+app.get('/me', function(req, res){
+  if (req.user) {
+    users.findOne({fbid: req.user.facebookId}).on('success', function(doc){
+      res.json(doc)
+    })
+  } else {
+    res.sendStatus(403)
+  }
+})
+
+app.post('/api/v1/add-point', function (req, res) {
+  users.update(
+   { fbid: req.user.facebookId},
+   { $inc: { points: 1} }
+  )
+  res.redirect('/me');
+})
+
 
 app.use('/', routes);
+
 
 app.get('*', function(req, res){
   res.sendFile('index.html', { root: __dirname + '/public/' });
