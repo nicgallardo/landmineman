@@ -1,11 +1,13 @@
 body {
-  padding: 50px;
+  padding: 0px;
+  margin: 0px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
 a {
   color: #00B7FF;
 }
+
 
 .test {
   height: 10000px;
@@ -42,12 +44,12 @@ a {
 }
 /*Game Logic Below*/
 .garden {
-  position: relative;
-  width : 200px;
-  height: 200px;
-  border: 5px solid #CCC;
-  border-radius: 10px;
-  background: #e6af4b;
+  position: relative !important;
+  width : 200px !important;
+  height: 200px !important;
+  border: 5px solid #CCC !important;
+  border-radius: 10px !important;
+  background: #e6af4b !important;
 }
 
 .ball {

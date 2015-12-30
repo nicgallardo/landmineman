@@ -56,8 +56,8 @@ app.controller('GamesController', ['$scope', '$http',  function($scope, $http) {
   var maxX = garden.clientWidth  - ball.clientWidth;
   var maxY = garden.clientHeight - ball.clientHeight;
   var blackHole = {
-    x: 16,
-    y: 16
+    x: 10,
+    y: 10
   }
 
   var point = 1;
@@ -68,19 +68,19 @@ app.controller('GamesController', ['$scope', '$http',  function($scope, $http) {
     var x = Math.floor(event.beta);
     var y = Math.floor(event.gamma);
 
-    for (var key in bombs) {
-      console.log((bombs[key].x), x);
-      if((bombs[key].x-10) == x && (bombs[key].y - 10) == y){
-        // console.log("Dead");
-      }
-    }
+    // for (var key in bombs) {
+    //   console.log((bombs[key].x), x);
+    //   if((bombs[key].x-10) == x && (bombs[key].y - 10) == y){
+    //     // console.log("Dead");
+    //   }
+    // }
 
     if(blackHole.x == x && blackHole.y == y) {
       score.innerHTML = point;
       point++;
       changeHole();
     }
-
+    // console.log("x: ", x, " y: ", y);
     output.innerHTML = "beta : " + x + "\n";
     output.innerHTML += "gamma: " + y + "\n";
 
@@ -97,7 +97,7 @@ app.controller('GamesController', ['$scope', '$http',  function($scope, $http) {
   function correctNumb(numb){
     if(numb == 0 ) return 90;
     if(numb == 90) return 0;
-    return numb > 90 ? (numb-80) : -(-numb + 80);
+    return numb > 90 ? (numb-80): -(-numb + 80);
   }
 
   function changeHole() {
@@ -105,7 +105,9 @@ app.controller('GamesController', ['$scope', '$http',  function($scope, $http) {
     var yCoord = Math.floor(Math.random()*(10, 170));
     blackHole.x = correctNumb(xCoord);
     blackHole.y = correctNumb(yCoord);
-
+    console.log("HOLE for intell: ", blackHole.x, blackHole.y);
+    console.log("HOLE for DOM: ", xCoord, yCoord);
+    xCoord, yCoord;
     var hole = document.querySelector('.hole');
     hole.style.top = xCoord + 'px';
     hole.style.left = yCoord + 'px';
