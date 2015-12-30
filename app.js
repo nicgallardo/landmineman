@@ -50,7 +50,7 @@ passport.use(new FacebookStrategy({
     profileFields: ['id', 'displayName', 'link', 'photos', 'email']
   },
   function(accessToken, refreshToken, profile, done) {
-
+    console.log("profile", profile);
     var fullName = profile.displayName.split(" ");
         userFirstName = fullName[0];
         userLastName = fullName[1];
@@ -71,7 +71,7 @@ passport.use(new FacebookStrategy({
           });
         }else{
           users.findOne({fbid: profile.id}).on('success', function (doc) {
-
+            console.log("doc", doc);
             done(null, { facebookId: profile.id, firstName: userFirstName, lastName: userLastName, token: accessToken });
           });
         }
@@ -82,6 +82,7 @@ passport.use(new FacebookStrategy({
 app.get('/auth/facebook/callback',
   passport.authenticate('facebook', { failureRedirect: '/login' }),
   function(req, res) {
+    console.log("CALLBACK HIT", req);
     res.redirect('/');
 });
 
