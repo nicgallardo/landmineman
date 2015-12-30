@@ -59,7 +59,6 @@ app.controller('GamesController', ['$scope', '$http',  function($scope, $http) {
   var blackHole = {
     x: 10,
     y: 10,
-    radius: 10
   }
 
   var point = 1;
@@ -75,19 +74,9 @@ app.controller('GamesController', ['$scope', '$http',  function($scope, $http) {
       var dy = bombs[i][1] - y;
       var distance = Math.sqrt(dx * dx + dy * dy);
       if (distance < 9.5 + 9.5) {
-        console.log("HIT HIT HIT HIT HIT HIT HIT");
-        // alert("DEAD");
-        // domAlert.setAttribute('id', 'OVER');
         domAlert.innerHTML='<h1>DEAD</h1>';
         garden.appendChild(domAlert);
       }
-      // if (bombs[i][0] == x && bombs[i][1] == y) {
-      //   console.log("HIT HIT HIT HIT HIT HIT HIT");
-      //   // alert("DEAD");
-      //   // domAlert.setAttribute('id', 'OVER');
-      //   domAlert.innerHTML='<h1>hello</h1><';
-      //   garden.appendChild(domAlert);
-      // }
     }
 
 
@@ -142,7 +131,7 @@ app.controller('GamesController', ['$scope', '$http',  function($scope, $http) {
     bombY = correctNumb(yCoord);
 
     var tempBomb = [];
-    tempBomb.push(bombX,bombY, 10);
+    tempBomb.push(bombX,bombY);
     bombs.push(tempBomb);
 
     var landmine = "<div class='bomb' style='top:" + xCoord+ "px; left:"+ yCoord +"px;'></div>";
