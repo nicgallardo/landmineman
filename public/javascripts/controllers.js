@@ -46,7 +46,8 @@ app.controller('LeadersController', ['$scope', function($scope) {
 }]);
 
 app.controller('GamesController', ['$scope', '$http',  function($scope, $http) {
-  //access the dom div
+
+  var domAlert = document.createElement('div');
   var ball   = document.querySelector('.ball');
   var garden = document.querySelector('.garden');
   var output = document.querySelector('.output');
@@ -57,7 +58,8 @@ app.controller('GamesController', ['$scope', '$http',  function($scope, $http) {
   var maxY = garden.clientHeight - ball.clientHeight;
   var blackHole = {
     x: 10,
-    y: 10
+    y: 10,
+    radius: 10
   }
 
   var point = 1;
@@ -68,12 +70,26 @@ app.controller('GamesController', ['$scope', '$http',  function($scope, $http) {
     var x = Math.floor(event.beta);
     var y = Math.floor(event.gamma);
 
-    // for (var key in bombs) {
-    //   console.log((bombs[key].x), x);
-    //   if((bombs[key].x-10) == x && (bombs[key].y - 10) == y){
-    //     // console.log("Dead");
-    //   }
-    // }
+    for (var i = 0; i < bombs.length; i++) {
+      var dx = bombs[i][0] - x;
+      var dy = bombs[i][1] - y;
+      var distance = Math.sqrt(dx * dx + dy * dy);
+      if (distance < 9.5 + 9.5) {
+        console.log("HIT HIT HIT HIT HIT HIT HIT");
+        // alert("DEAD");
+        // domAlert.setAttribute('id', 'OVER');
+        domAlert.innerHTML='<h1>DEAD</h1>';
+        garden.appendChild(domAlert);
+      }
+      // if (bombs[i][0] == x && bombs[i][1] == y) {
+      //   console.log("HIT HIT HIT HIT HIT HIT HIT");
+      //   // alert("DEAD");
+      //   // domAlert.setAttribute('id', 'OVER');
+      //   domAlert.innerHTML='<h1>hello</h1><';
+      //   garden.appendChild(domAlert);
+      // }
+    }
+
 
     if(blackHole.x == x && blackHole.y == y) {
       score.innerHTML = point;
@@ -105,8 +121,7 @@ app.controller('GamesController', ['$scope', '$http',  function($scope, $http) {
     var yCoord = Math.floor(Math.random()*(10, 170));
     blackHole.x = correctNumb(xCoord);
     blackHole.y = correctNumb(yCoord);
-    console.log("HOLE for intell: ", blackHole.x, blackHole.y);
-    console.log("HOLE for DOM: ", xCoord, yCoord);
+
     xCoord, yCoord;
     var hole = document.querySelector('.hole');
     hole.style.top = xCoord + 'px';
@@ -127,7 +142,7 @@ app.controller('GamesController', ['$scope', '$http',  function($scope, $http) {
     bombY = correctNumb(yCoord);
 
     var tempBomb = [];
-    tempBomb.push(bombX,bombY);
+    tempBomb.push(bombX,bombY, 10);
     bombs.push(tempBomb);
 
     var landmine = "<div class='bomb' style='top:" + xCoord+ "px; left:"+ yCoord +"px;'></div>";
