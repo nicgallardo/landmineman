@@ -12,7 +12,7 @@ app.controller('HomeController', ['$scope', '$window', '$http', function($scope,
 }]);
 
 app.controller('NavController', ['$scope', '$window', '$http', function($scope, $window, $http) {
-    var test = $window.navigator.userAgent;
+    var findBrowser = $window.navigator.userAgent;
 
     $http.get('/me').then(function(response){
       localStorage.setItem('fbID', response.data.facebookId);
@@ -62,9 +62,6 @@ app.controller('GamesController', ['$scope', '$http',  function($scope, $http) {
   }
 
   var point = 1;
-  //need to loop through bombs object constantly to see if they are hit
-  //needs to loop through bombs to make sure new bomb isnt placed where the hole is when player achieves point
-  //create bomb needs to loop through the bombs to make sure bombs are not placed on top of another
   function handleOrientation(event) {
     var x = Math.floor(event.beta);
     var y = Math.floor(event.gamma);
@@ -78,7 +75,6 @@ app.controller('GamesController', ['$scope', '$http',  function($scope, $http) {
         garden.appendChild(domAlert);
       }
     }
-
 
     if(blackHole.x == x && blackHole.y == y) {
       score.innerHTML = point;
