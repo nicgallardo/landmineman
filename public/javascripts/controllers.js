@@ -171,8 +171,6 @@ app.controller('GamesController', ['$scope', '$http',  function($scope, $http) {
 
 app.controller('DesktopGamesController', ['$scope', '$http',  function($scope, $http) {
 
-
-
   var backgroundMusic = document.getElementById('background');
   backgroundMusic.playbackRate = 0.5;
   var zap = document.getElementById('zap')
@@ -196,6 +194,7 @@ app.controller('DesktopGamesController', ['$scope', '$http',  function($scope, $
   $scope.mouseTrack = function($event){
     y = $event.offsetX;
     x = $event.offsetY
+    socketTrack(x, y);
     keyEvents(x, y)
   }
 
@@ -281,4 +280,27 @@ app.controller('DesktopGamesController', ['$scope', '$http',  function($scope, $
     bomb.innerHTML = landmine;
     garden.appendChild(bomb);
   }
+
+  //add post to api so socket can listen?
+  function socketTrack(playerX, playerY) {
+    var trackerObj = {};
+    trackerObj["x"] = playerX, trackerObj["y"] = playerY
+    $http.post('/api/v1/tracker', trackerObj).
+    success(function(data) {
+        console.log("posted successfully: ", data);
+    }).error(function(data) {
+        console.error("error in posting: ", data);
+    })
+  }
+
+
+  var socket = io();
+  // send a message
+  socket.on('playerMovement', function(data){
+    $scope.movement = data;
+    $scope.$apply();
+  })
+  socket.emit('tracker', 'dummy');
+   //learning experince
+  // register a destroy hook that clears all listeners - check the learning experience
 }]);
