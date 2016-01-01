@@ -327,19 +327,19 @@ app.controller('WatchController', ['$scope', '$http',  function($scope, $http) {
   var output = document.querySelector('.output');
   var score = document.querySelector('.score');
   var hole = document.querySelector('.hole');
-
+  var playerTwoBall = document.querySelector('.playerTwoBall');
   var socket = io();
   var ballX, ballY;
   socket.on('playerMovement', function(data){
     $scope.movement = data;
     ball.style.top  = data.x + "px";
     ball.style.left = data.y+ "px";
+    // getBallInfo(data);
     $scope.$apply();
   })
   socket.on('holeMovement', function(data){
     hole.style.top = data.x + "px";
     hole.style.left = data.y + "px";
-    console.log("hole.style", hole.style);
     $scope.holeMovement = data;
     $scope.$apply();
   })
@@ -354,5 +354,8 @@ app.controller('WatchController', ['$scope', '$http',  function($scope, $http) {
     }
     $scope.$apply();
   })
-  
+  // function getBallInfo(ballObj) {
+  //   console.log("ballObjInfo", ballObj);
+  // }
+
 }]);
