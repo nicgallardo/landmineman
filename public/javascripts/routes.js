@@ -20,6 +20,10 @@ app.config(function($routeProvider, $locationProvider){
         templateUrl: 'partials/game-desktop.html',
         controller: 'DesktopGamesController'
       })
+      .when('/desktop-watch', {
+        templateUrl: 'partials/desktop-watch.html',
+        controller: 'WatchController'
+      })
       .otherwise({redirectTo:'/'});
       $locationProvider.html5Mode(true);
   })

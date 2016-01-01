@@ -11,7 +11,6 @@ var session = require('express-session');
 var io = require('socket.io')(app);
 var db = require('monk')('localhost/bombroller-users');
 var users = db.get('users');
-var tracker = db.get('tracker');
 
 require('dotenv').load();
 passport.authenticate();
@@ -127,20 +126,6 @@ app.post('/api/v1/add-point', function (req, res) {
   )
   res.redirect('/me');
 })
-
-app.post('/api/v1/tracker', function (req, res) {
-  console.log("tracker :", req.body);
-  tracker.insert({
-    fbid: profile.id,
-    firstname: userFirstName,
-    lastname: userLastName,
-    profilepic: userPhoto,
-    points: 0,
-  }, function (err, doc) {
-    if (err) throw err;
-  });
-})
-
 
 app.use('/', routes);
 

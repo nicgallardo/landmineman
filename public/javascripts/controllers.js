@@ -189,13 +189,15 @@ app.controller('DesktopGamesController', ['$scope', '$http',  function($scope, $
     x: 90,
     y: 90,
   }
+  trackBlackHole(blackHole);
+
   var point = 1;
   var x = 0, y = 0;
   $scope.mouseTrack = function($event){
     y = $event.offsetX;
     x = $event.offsetY
-    socketTrack(x, y);
     keyEvents(x, y)
+    trackObjCreator(x, y)
   }
 
   function keyEvents(x, y) {
@@ -249,6 +251,7 @@ app.controller('DesktopGamesController', ['$scope', '$http',  function($scope, $
     // blackHoleLocation.innerHTML = "blackHole.x : " + blackHole.x + "  blackHole.y : " + blackHole.y;
     // domHoleLocation.innerHTML = "dom.xCoord : " + xCoord + "  dom.yCoord : " + yCoord;
     createBomb();
+    trackBlackHole(blackHole)
   }
   var bombs = [];
 
@@ -279,28 +282,61 @@ app.controller('DesktopGamesController', ['$scope', '$http',  function($scope, $
     var bomb = document.createElement('div');
     bomb.innerHTML = landmine;
     garden.appendChild(bomb);
+    trackBombs(bombs);
   }
-
-  //add post to api so socket can listen?
-  function socketTrack(playerX, playerY) {
-    var trackerObj = {};
-    trackerObj["x"] = playerX, trackerObj["y"] = playerY
-    $http.post('/api/v1/tracker', trackerObj).
-    success(function(data) {
-        console.log("posted successfully: ", data);
-    }).error(function(data) {
-        console.error("error in posting: ", data);
+  //socket tracker
+  var socket = io();
+  var trackerObj = {};
+  function trackObjCreator(x, y) {
+    trackerObj["x"] = x, trackerObj["y"] = y;
+    socket.on('playerMovement', function(data){
+      $scope.movement = data;
+      $scope.$apply();
     })
+    socket.emit('tracker', trackerObj);
   }
 
+  function trackBlackHole(blackHole){
+    var socket = io();
+    socket.on('holeMovement', function(data){
+      $scope.holeMovement = data;
+      $scope.$apply();
+    })
+    socket.emit('trackHole', blackHole);
+  }
+
+  function trackBombs(bombsArray) {
+    var socket = io();
+    socket.on('bombsTracked', function(data){
+      $scope.holeMovement = data;
+      $scope.$apply();
+    })
+    socket.emit('trackBombs', bombsArray);
+  }
+
+}]);
+
+app.controller('WatchController', ['$scope', '$http',  function($scope, $http) {
+  //track all movement player movement; holeMovement; bombsAdded justlook broadcast the bombsArray;
 
   var socket = io();
-  // send a message
   socket.on('playerMovement', function(data){
+    console.log("playerMovement: ",data);
     $scope.movement = data;
     $scope.$apply();
   })
-  socket.emit('tracker', 'dummy');
-   //learning experince
-  // register a destroy hook that clears all listeners - check the learning experience
+
+  socket.on('holeMovement', function(data){
+    console.log("holeMovement: ",data);
+    $scope.holeMovement = data;
+    $scope.$apply();
+  })
+
+  socket.on('bombsTracked', function(data){
+    console.log("bombsTracked: ",data);
+    $scope.bombsTracked = data;
+    $scope.$apply();
+  })
+
+
 }]);
