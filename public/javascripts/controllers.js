@@ -317,26 +317,42 @@ app.controller('DesktopGamesController', ['$scope', '$http',  function($scope, $
 }]);
 
 app.controller('WatchController', ['$scope', '$http',  function($scope, $http) {
-  //track all movement player movement; holeMovement; bombsAdded justlook broadcast the bombsArray;
+  var backgroundMusic = document.getElementById('background');
+  backgroundMusic.playbackRate = 0.5;
+  var zap = document.getElementById('zap')
+  var explosion = document.getElementById('kaboom')
+  var domAlert = document.createElement('div');
+  var ball   = document.querySelector('.ball');
+  var garden = document.querySelector('.desktop-garden');
+  var output = document.querySelector('.output');
+  var score = document.querySelector('.score');
+  var hole = document.querySelector('.hole');
 
   var socket = io();
+  var ballX, ballY;
   socket.on('playerMovement', function(data){
-    console.log("playerMovement: ",data);
     $scope.movement = data;
+    ball.style.top  = data.x + "px";
+    ball.style.left = data.y+ "px";
     $scope.$apply();
   })
-
   socket.on('holeMovement', function(data){
-    console.log("holeMovement: ",data);
+    hole.style.top = data.x + "px";
+    hole.style.left = data.y + "px";
+    console.log("hole.style", hole.style);
     $scope.holeMovement = data;
     $scope.$apply();
   })
-
   socket.on('bombsTracked', function(data){
-    console.log("bombsTracked: ",data);
     $scope.bombsTracked = data;
+    var landmine, bomb;
+    for (var i = 0; i < data.length; i++) {
+      landmine = "<div class='bomb' style='top:" + data[i][0]+ "px; left:"+ data[i][1] +"px;'></div>";
+      bomb = document.createElement('div');
+      bomb.innerHTML = landmine;
+      garden.appendChild(bomb);
+    }
     $scope.$apply();
   })
-
-
+  
 }]);

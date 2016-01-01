@@ -5,3 +5,11 @@
   <ul>Tracking Player Movement: {{movement}}</ul>
   <ul>Tracking New Hole : {{holeMovement}}</ul>
   <ul>Track Bombs : {{bombsTracked}}</ul>
+<div class="board-container">
+  <div class="desktop-garden">
+    <div class="hole"></div>
+    <div class="ball"></div>
+  </div>
+  <div class="keypad" ng-mousemove="mouseTrack($event)">
+  </div>
+</div>
