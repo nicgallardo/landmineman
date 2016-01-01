@@ -9,10 +9,16 @@
   count: {{count}}
 </span>
 <div class="ticker"><div class="score"></div></div>
-<div class="garden">
-  <div class="hole"></div>
-  <div class="ball"></div>
+<div class="board-container">
+  <div class="desktop-garden">
+    <div class="hole"></div>
+    <div class="ball"></div>
+  </div>
+  <div class="keypad" ng-mousemove="mouseTrack($event)">
+  </div>
 </div>
+<!-- <div class="keypad" ng-mousemove="mouseTrack($event)"></div> -->
+<!-- <input ng-keydown="keyPress($event)"> -->
 <div class="output" ng-hide=""></div>
 <div class="blackhole-location" ng-hide=""></div>
 <div class="domHole-location" ng-hide=""></div>

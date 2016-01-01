@@ -27,6 +27,18 @@ a {
   position:fixed;
   /*background-color:#000;*/
 }
+.board-container {
+  width: 800px
+}
+.keypad {
+  height: 400px;
+  width: 400px;
+  background-color: pink;
+}
+.mobile-press {
+  background-color: grey;
+  height: 40px;
+}
 
 .test {
   height: 10000px;
@@ -62,12 +74,24 @@ a {
   background-color: #e6e6e6;
 }
 /*Game Logic Below*/
+.ticker {
+  width: 200px;
+  height: 50px;
+  background: green;
+  font-family: 'Orbitron', sans-serif;
+}
 .garden {
   position: relative !important;
   width : 200px !important;
   height: 200px !important;
-  border: 5px solid #CCC !important;
-  border-radius: 10px !important;
+  border: 1px solid #CCC !important;
+  background: #e6af4b !important;
+}
+.desktop-garden {
+  position: relative !important;
+  width : 400px !important;
+  height: 400px !important;
+  border: 1px solid #CCC !important;
   background: #e6af4b !important;
 }
 

@@ -16,6 +16,10 @@ app.config(function($routeProvider, $locationProvider){
         templateUrl: 'partials/game.html',
         controller: 'GamesController'
       })
+      .when('/game-desktop', {
+        templateUrl: 'partials/game-desktop.html',
+        controller: 'DesktopGamesController'
+      })
       .otherwise({redirectTo:'/'});
       $locationProvider.html5Mode(true);
   })

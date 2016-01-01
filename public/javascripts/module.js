@@ -1,1 +1,1 @@
-var app = angular.module('landminemanApp', ['ngRoute', 'ngCookies']);
+var app = angular.module('landminemanApp', ['ngRoute', 'ngCookies', 'ngTouch']);

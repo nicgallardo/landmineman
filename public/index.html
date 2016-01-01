@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title></title>
+
     <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" media="screen" title="no title" charset="utf-8">
     <script scr="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script> -->
     <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script> -->
@@ -12,11 +13,14 @@
     <script src="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.min.js"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <!--  -->
+    <link href='https://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="/stylesheets/style.css" charset="utf-8">
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-route.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-touch.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-rc.0/angular-cookies.min.js"></script>
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
     <base href="/">
   </head>
   <body>
@@ -53,6 +57,7 @@
   <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="menu-lower-left">
     <li class="mdl-menu__item"><a href="/">home</a></li>
     <li class="mdl-menu__item"><a href="/game">play game</a></li>
+    <li class="mdl-menu__item"><a href="/game-desktop">desktop game</a></li>
     <li class="mdl-menu__item"><a href="/leaders">leaderboard</a></li>
     <li class="mdl-menu__item" ng-if="userName != undefined"><a href="/logout" target="_self">logout</a></li>
     <li class="mdl-menu__item" ng-if="userName == undefined"><a href="/auth/facebook" target="_self">facebook login</a></li>

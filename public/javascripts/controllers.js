@@ -46,7 +46,13 @@ app.controller('LeadersController', ['$scope', function($scope) {
 }]);
 
 app.controller('GamesController', ['$scope', '$http',  function($scope, $http) {
+  var backgroundMusic = document.getElementById('background');
+  backgroundMusic.playbackRate = 0.5;
 
+
+
+  var zap = document.getElementById('zap')
+  var explosion = document.getElementById('kaboom')
   var domAlert = document.createElement('div');
   var ball   = document.querySelector('.ball');
   var garden = document.querySelector('.garden');
@@ -65,20 +71,26 @@ app.controller('GamesController', ['$scope', '$http',  function($scope, $http) {
   function handleOrientation(event) {
     var x = Math.floor(event.beta);
     var y = Math.floor(event.gamma);
-
+//bomb hit logic
     for (var i = 0; i < bombs.length; i++) {
       var dx = bombs[i][0] - x;
       var dy = bombs[i][1] - y;
       var distance = Math.sqrt(dx * dx + dy * dy);
       if (distance < 9.5 + 9.5) {
-        domAlert.innerHTML='<h1>DEAD</h1>';
-        garden.appendChild(domAlert);
+        domAlert.innerHTML='<h4>Game Over</h4>';
+        document.querySelector('.ticker').appendChild(domAlert);
+        backgroundMusic.playbackRate -= 100;
+        explosion.play();
       }
     }
-
+//blackHole target logic
     if(blackHole.x == x && blackHole.y == y) {
+      domAlert.innerHTML='<span>Score!</span>';
+      document.querySelector('.ticker').appendChild(domAlert);
       score.innerHTML = point;
       point++;
+      backgroundMusic.playbackRate += 0.1;
+      zap.play();
       changeHole();
     }
     // console.log("x: ", x, " y: ", y);
@@ -141,15 +153,132 @@ app.controller('GamesController', ['$scope', '$http',  function($scope, $http) {
   // below increments the score only
   $scope.count = 0;
   $scope.increment = function(){
+    explosion.play();
     $scope.count++;
-    var dataObj = {
-      score : $scope.count,
+    // var dataObj = {
+    //   score : $scope.count,
+    // }
+    // $http.post('/api/v1/add-point', dataObj).
+    // success(function(data) {
+    //     console.log("posted successfully: ", data);
+    // }).error(function(data) {
+    //     console.error("error in posting: ", data);
+    // })
+  }
+}]);
+
+//desktop game -----------------------------------------------------------------
+
+app.controller('DesktopGamesController', ['$scope', '$http',  function($scope, $http) {
+
+
+
+  var backgroundMusic = document.getElementById('background');
+  backgroundMusic.playbackRate = 0.5;
+  var zap = document.getElementById('zap')
+  var explosion = document.getElementById('kaboom')
+  var domAlert = document.createElement('div');
+  var ball   = document.querySelector('.ball');
+  var garden = document.querySelector('.desktop-garden');
+  var output = document.querySelector('.output');
+  var score = document.querySelector('.score');
+  var blackHoleLocation = document.querySelector('.blackhole-location')
+  var domHoleLocation = document.querySelector('.domHole-location')
+  var maxX = garden.clientWidth  - ball.clientWidth;
+  var maxY = garden.clientHeight - ball.clientHeight;
+  var tempHoleHolder;
+  var blackHole = {
+    x: 90,
+    y: 90,
+  }
+  var point = 1;
+  var x = 0, y = 0;
+  $scope.mouseTrack = function($event){
+    y = $event.offsetX;
+    x = $event.offsetY
+    keyEvents(x, y)
+  }
+
+  function keyEvents(x, y) {
+    for (var i = 0; i < bombs.length; i++) {
+      var dx = bombs[i][0] - x;
+      var dy = bombs[i][1] - y;
+      var distance = Math.sqrt(dx * dx + dy * dy);
+      if (distance < 9.5 + 9.5) {
+        domAlert.innerHTML='<h4>Game Over</h4>';
+        document.querySelector('.ticker').appendChild(domAlert);
+        backgroundMusic.playbackRate -= 100;
+        explosion.play();
+      }
     }
-    $http.post('/api/v1/add-point', dataObj).
-    success(function(data) {
-        console.log("posted successfully: ", data);
-    }).error(function(data) {
-        console.error("error in posting: ", data);
-    })
+//blackHole target logic
+    if(blackHole.x == x && blackHole.y == y) {
+      domAlert.innerHTML='<span>Score!</span>';
+      document.querySelector('.ticker').appendChild(domAlert);
+      score.innerHTML = point;
+      point++;
+      backgroundMusic.playbackRate += 0.1;
+      zap.play();
+      changeHole();
+    }
+    output.innerHTML = "beta : " + x + "\n";
+    output.innerHTML += "gamma: " + y + "\n";
+
+    ball.style.top  = x + "px";
+    ball.style.left = y + "px";
+  }
+
+  function changeHole() {
+    tempHoleHolder = blackHole;
+    blackHole.x = Math.floor(Math.random()*(10, 380));
+    blackHole.y = Math.floor(Math.random()*(10, 380));
+
+
+    for (var i = 0; i < bombs.length; i++) {
+      var dx = bombs[i][0] - blackHole.x;
+      var dy = bombs[i][1] - blackHole.y;
+      var distance = Math.sqrt(dx * dx + dy * dy);
+      if (distance < 10 + 10) {
+        changeHole();
+      }
+    }
+
+    var hole = document.querySelector('.hole');
+    hole.style.top = blackHole.x + 'px';
+    hole.style.left = blackHole.y + 'px';
+
+    // blackHoleLocation.innerHTML = "blackHole.x : " + blackHole.x + "  blackHole.y : " + blackHole.y;
+    // domHoleLocation.innerHTML = "dom.xCoord : " + xCoord + "  dom.yCoord : " + yCoord;
+    createBomb();
+  }
+  var bombs = [];
+
+  function createBomb() {
+    var bombX = Math.floor(Math.random()*(20, 380));
+    var bombY = Math.floor(Math.random()*(20, 380));
+    //safezone doesnt work
+    var xSafeZoneTop = (tempHoleHolder.x -15);
+    var xSafeZoneBottom = (tempHoleHolder.x +15);
+    var ySafeZoneLeft = (tempHoleHolder.y -15);
+    var ySafeZoneRight = (tempHoleHolder.y +15);
+    console.log("tempHoleHolder :",tempHoleHolder);
+    console.log("safezone:", ySafeZoneRight, ySafeZoneLeft);
+    if(bombX < xSafeZoneTop && bombX > xSafeZoneBottom){
+      console.log("SAFEZONE TRIPPED");
+      createBomb();
+    }
+    if(bombY < ySafeZoneLeft && bombY > ySafeZoneRight){
+      console.log("SAFEZONE TRIPPED");
+      createBomb();
+    }
+
+    var tempBomb = [];
+    tempBomb.push(bombX,bombY);
+    bombs.push(tempBomb);
+
+    var landmine = "<div class='bomb' style='top:" + bombX+ "px; left:"+ bombY +"px;'></div>";
+    var bomb = document.createElement('div');
+    bomb.innerHTML = landmine;
+    garden.appendChild(bomb);
   }
 }]);
