@@ -2,8 +2,31 @@ app.controller('IndexController', ['$scope', function($scope) {
 
   }]);
 
-app.controller('HomeController', ['$scope', '$window', '$http', function($scope, $window,$http) {
+//delete this and the routes and links when complete. 
+app.controller('TestController', ['$scope', 'pop', 'hide', function($scope, pop, hide) {
+  $scope.pop = function(div){
+    pop(div);
+  }
+
+  $scope.hide = function(div){
+    hide(div);
+  }
+}]);
+
+app.controller('RoomController', ['$scope', function($scope, $route, $routeParams, $location) {
+  $scope.message = "HELLO!";
+  console.log($route);
+  $scope.currentParam = $routeParams;
+  console.log($routeParams);
+
+  }]);
+
+app.controller('HomeController', ['$scope', '$window', '$http', function($scope, $window, $http) {
     var usersFirst = localStorage.getItem("firstname");
+
+    $scope.update = function(gameRoomName) {
+      $scope.roomName = gameRoomName;
+    };
     //needs this for the nav show hide logic. not sure why?! TODO: FIX!
     $http.get('/me').then(function(response){
       $scope.userName = localStorage.getItem("firstName");
@@ -175,7 +198,7 @@ app.controller('DesktopGamesController', ['$scope', '$http',  function($scope, $
   backgroundMusic.playbackRate = 0.5;
   var zap = document.getElementById('zap')
   var explosion = document.getElementById('kaboom')
-  var domAlert = document.createElement('div');
+  var boardAlert = document.querySelector('.board-alert');
   var ball   = document.querySelector('.ball');
   var garden = document.querySelector('.desktop-garden');
   var output = document.querySelector('.output');
@@ -206,24 +229,20 @@ app.controller('DesktopGamesController', ['$scope', '$http',  function($scope, $
       var dy = bombs[i][1] - y;
       var distance = Math.sqrt(dx * dx + dy * dy);
       if (distance < 9.5 + 9.5) {
-        domAlert.innerHTML='<h4>Game Over</h4>';
-        document.querySelector('.ticker').appendChild(domAlert);
+        boardAlert.innerHTML='<h4>Game Over</h4>';
         backgroundMusic.playbackRate -= 100;
         explosion.play();
       }
     }
 //blackHole target logic
     if(blackHole.x == x && blackHole.y == y) {
-      domAlert.innerHTML='<span>Score!</span>';
-      document.querySelector('.ticker').appendChild(domAlert);
+      boardAlert.innerHTML='<span> Score! Total: '+ point+' !</span>';
       score.innerHTML = point;
       point++;
       backgroundMusic.playbackRate += 0.1;
       zap.play();
       changeHole();
     }
-    output.innerHTML = "beta : " + x + "\n";
-    output.innerHTML += "gamma: " + y + "\n";
 
     ball.style.top  = x + "px";
     ball.style.left = y + "px";
@@ -263,16 +282,8 @@ app.controller('DesktopGamesController', ['$scope', '$http',  function($scope, $
     var xSafeZoneBottom = (tempHoleHolder.x +15);
     var ySafeZoneLeft = (tempHoleHolder.y -15);
     var ySafeZoneRight = (tempHoleHolder.y +15);
-    console.log("tempHoleHolder :",tempHoleHolder);
-    console.log("safezone:", ySafeZoneRight, ySafeZoneLeft);
-    if(bombX < xSafeZoneTop && bombX > xSafeZoneBottom){
-      console.log("SAFEZONE TRIPPED");
-      createBomb();
-    }
-    if(bombY < ySafeZoneLeft && bombY > ySafeZoneRight){
-      console.log("SAFEZONE TRIPPED");
-      createBomb();
-    }
+    if(bombX < xSafeZoneTop && bombX > xSafeZoneBottom) createBomb();
+    if(bombY < ySafeZoneLeft && bombY > ySafeZoneRight) createBomb();
 
     var tempBomb = [];
     tempBomb.push(bombX,bombY);
@@ -327,14 +338,13 @@ app.controller('WatchController', ['$scope', '$http',  function($scope, $http) {
   var output = document.querySelector('.output');
   var score = document.querySelector('.score');
   var hole = document.querySelector('.hole');
-  var playerTwoBall = document.querySelector('.playerTwoBall');
+  var playerTwoBall = document.querySelector('.player-two-ball');
   var socket = io();
   var ballX, ballY;
   socket.on('playerMovement', function(data){
     $scope.movement = data;
     ball.style.top  = data.x + "px";
     ball.style.left = data.y+ "px";
-    // getBallInfo(data);
     $scope.$apply();
   })
   socket.on('holeMovement', function(data){
@@ -354,8 +364,5 @@ app.controller('WatchController', ['$scope', '$http',  function($scope, $http) {
     }
     $scope.$apply();
   })
-  // function getBallInfo(ballObj) {
-  //   console.log("ballObjInfo", ballObj);
-  // }
 
 }]);
