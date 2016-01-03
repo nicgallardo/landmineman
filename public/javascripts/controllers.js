@@ -192,19 +192,7 @@ app.controller('GamesController', ['$scope', '$http',  function($scope, $http) {
 
 //desktop game -----------------------------------------------------------------
 
-app.controller('DesktopGamesController', ['$scope', '$http', 'pop', 'playAgain', 'createBombDesktopFactory', 'changeHoleDesktopFactory', 'keyEventsDesktopFactory',  function($scope, $http, pop, playAgain, createBombDesktopFactory, changeHoleDesktopFactory, keyEventsDesktopFactory) {
-
-  var backgroundMusic = document.getElementById('background');
-  backgroundMusic.playbackRate = 0.5;
-  var zap = document.getElementById('zap')
-  var explosion = document.getElementById('kaboom')
-  var boardAlert = document.querySelector('.board-alert');
-  var ball   = document.querySelector('.ball');
-  var garden = document.querySelector('.desktop-garden');
-  var output = document.querySelector('.output');
-  var score = document.querySelector('.score');
-  var blackHoleLocation = document.querySelector('.blackhole-location')
-  var domHoleLocation = document.querySelector('.domHole-location')
+app.controller('DesktopGamesController', ['$scope', '$http', 'pop', 'playAgain', 'createBombDesktopFactory', 'changeHoleDesktopFactory', 'keyEventsDesktopFactory', 'blinkingDivFactory', 'socketDesktopPlayerMovesFactory', function($scope, $http, pop, playAgain, createBombDesktopFactory, changeHoleDesktopFactory, keyEventsDesktopFactory, blinkingDivFactory, socketDesktopPlayerMovesFactory) {
 
   var desktopDomObj = {
     backgroundMusic: document.getElementById('background'),
@@ -215,31 +203,30 @@ app.controller('DesktopGamesController', ['$scope', '$http', 'pop', 'playAgain',
     garden: document.querySelector('.desktop-garden'),
     output: document.querySelector('.output'),
     score: document.querySelector('.score'),
-    blackHoleLocation: document.querySelector('.blackhole-location'),
-    domHoleLocation: document.querySelector('.domHole-location')
+    hole: document.querySelector('.hole'),
+    points: 0,
+    tempHoleHolder: null,
+    bombs: [],
+    blackHole: {x:90, y:90}
   }
+
   desktopDomObj.backgroundMusic.playbackRate = 0.5;
-  var maxX = garden.clientWidth  - ball.clientWidth;
-  var maxY = garden.clientHeight - ball.clientHeight;
-  var tempHoleHolder;
-  var bombs = [];
-  var point = 1;
-  var x = 0, y = 0;
-  var blackHole = {
-    x: 90,
-    y: 90,
-  }
-  trackBlackHole(blackHole);
+  console.log(desktopDomObj.blackHole);
+  trackBlackHole(desktopDomObj.blackHole, $scope);
+  // trackBlackHole(desktopDomObj.blackHole);
 
   $scope.mouseTrack = function($event){
-    y = $event.offsetX;
-    x = $event.offsetY
+    var y = $event.offsetX;
+    var x = $event.offsetY;
     keyEvents(x, y)
-    trackObjCreator(x, y)
+    //below is for sockets
+    socketDesktopPlayerMovesFactory(x, y)
   }
 
+  blinkingDivFactory(desktopDomObj.hole);
+
   function keyEvents(x, y) {
-    keyEventsDesktopFactory(x, y, bombs, blackHole, ball, boardAlert, point, score, backgroundMusic, changeHoleFn, pop, explosion);
+    keyEventsDesktopFactory(x, y, changeHoleFn, pop, desktopDomObj);
   }
 
   $scope.playAgain = function() {
@@ -247,26 +234,14 @@ app.controller('DesktopGamesController', ['$scope', '$http', 'pop', 'playAgain',
   }
 
   var changeHoleFn  = function changeHoleDesktop() {
-    tempHoleHolder = blackHole;
-    changeHoleDesktopFactory(blackHole, bombs, tempHoleHolder);
+    desktopDomObj.tempHoleHolder = desktopDomObj.blackHole;
+    changeHoleDesktopFactory(desktopDomObj);
     createBombDesktop();
-    trackBlackHole(blackHole)
+    trackBlackHole(desktopDomObj.blackHole, $scope)
   }
 
   function createBombDesktop() {
-    createBombDesktopFactory(tempHoleHolder, bombs, garden, trackBombs);
-  }
-
-  //socket tracker
-  var socket = io();
-  var trackerObj = {};
-  function trackObjCreator(x, y) {
-    trackerObj["x"] = x, trackerObj["y"] = y;
-    socket.on('playerMovement', function(data){
-      $scope.movement = data;
-      $scope.$apply();
-    })
-    socket.emit('tracker', trackerObj);
+    createBombDesktopFactory(trackBombs, desktopDomObj);
   }
 
   function trackBlackHole(blackHole){
