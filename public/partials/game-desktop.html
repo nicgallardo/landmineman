@@ -5,6 +5,17 @@
 <p>
   Testt IO : {{movement}}
 </p>
+<!-- grey out popup to indicate lose -->
+<div id="popDiv" class="ontop">
+	<table border="0" id="popup">
+		<tr>
+		<td>
+      <span id="gameOverMsg"></span>
+			<a href="#" ng-click="playAgain()">Play Again</a>
+			</td>
+		</tr>
+	</table>
+</div>
 <div class="board-alert"></div>
 <div class="ticker"><div class="score"></div></div>
 <div class="desktop-container">

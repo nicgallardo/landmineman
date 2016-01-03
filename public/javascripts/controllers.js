@@ -2,14 +2,14 @@ app.controller('IndexController', ['$scope', function($scope) {
 
   }]);
 
-//delete this and the routes and links when complete. 
-app.controller('TestController', ['$scope', 'pop', 'hide', function($scope, pop, hide) {
+//delete this and the routes and links when complete.
+app.controller('TestController', ['$scope', 'pop', 'playAgain', function($scope, pop, playAgain) {
   $scope.pop = function(div){
     pop(div);
   }
 
-  $scope.hide = function(div){
-    hide(div);
+  $scope.playAgain = function(div){
+    playAgain(div);
   }
 }]);
 
@@ -27,7 +27,7 @@ app.controller('HomeController', ['$scope', '$window', '$http', function($scope,
     $scope.update = function(gameRoomName) {
       $scope.roomName = gameRoomName;
     };
-    //needs this for the nav show hide logic. not sure why?! TODO: FIX!
+    //needs this for the nav show playAgain logic. not sure why?! TODO: FIX!
     $http.get('/me').then(function(response){
       $scope.userName = localStorage.getItem("firstName");
     }, function (err) {
@@ -192,7 +192,7 @@ app.controller('GamesController', ['$scope', '$http',  function($scope, $http) {
 
 //desktop game -----------------------------------------------------------------
 
-app.controller('DesktopGamesController', ['$scope', '$http',  function($scope, $http) {
+app.controller('DesktopGamesController', ['$scope', '$http', 'pop', 'playAgain', function($scope, $http, pop, playAgain) {
 
   var backgroundMusic = document.getElementById('background');
   backgroundMusic.playbackRate = 0.5;
@@ -208,6 +208,7 @@ app.controller('DesktopGamesController', ['$scope', '$http',  function($scope, $
   var maxX = garden.clientWidth  - ball.clientWidth;
   var maxY = garden.clientHeight - ball.clientHeight;
   var tempHoleHolder;
+
   var blackHole = {
     x: 90,
     y: 90,
@@ -216,6 +217,7 @@ app.controller('DesktopGamesController', ['$scope', '$http',  function($scope, $
 
   var point = 1;
   var x = 0, y = 0;
+
   $scope.mouseTrack = function($event){
     y = $event.offsetX;
     x = $event.offsetY
@@ -229,8 +231,10 @@ app.controller('DesktopGamesController', ['$scope', '$http',  function($scope, $
       var dy = bombs[i][1] - y;
       var distance = Math.sqrt(dx * dx + dy * dy);
       if (distance < 9.5 + 9.5) {
+        pop(point);
         boardAlert.innerHTML='<h4>Game Over</h4>';
         backgroundMusic.playbackRate -= 100;
+        console.log("TESTING IF STATEMENT");
         explosion.play();
       }
     }
@@ -246,6 +250,10 @@ app.controller('DesktopGamesController', ['$scope', '$http',  function($scope, $
 
     ball.style.top  = x + "px";
     ball.style.left = y + "px";
+  }
+
+  $scope.playAgain = function() {
+    playAgain();
   }
 
   function changeHole() {

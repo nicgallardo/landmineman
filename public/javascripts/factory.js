@@ -1,11 +1,12 @@
 app.factory('pop', ['$window', function() {
-  return function (div) {
-      document.getElementById(div).style.display = 'block';
+  return function (point) {
+      document.getElementById('popDiv').style.display = 'block';
+      document.getElementById('gameOverMsg').innerHTML = "<h3>Game Over!</h3><h4>Final Score " + point + "</h4>";
     }
- }]);
- 
-app.factory('hide', ['$window', function() {
-  return function (div) {
-      document.getElementById(div).style.display = 'none';
+}]);
+
+app.factory('playAgain', ['$window', function() {
+  return function () {
+      location.reload(true);
     }
- }]);
+}]);
