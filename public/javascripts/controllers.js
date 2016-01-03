@@ -192,7 +192,7 @@ app.controller('GamesController', ['$scope', '$http',  function($scope, $http) {
 
 //desktop game -----------------------------------------------------------------
 
-app.controller('DesktopGamesController', ['$scope', '$http', 'pop', 'playAgain', function($scope, $http, pop, playAgain) {
+app.controller('DesktopGamesController', ['$scope', '$http', 'pop', 'playAgain', 'createBombDesktopFactory', 'changeHoleDesktopFactory', 'keyEventsDesktopFactory',  function($scope, $http, pop, playAgain, createBombDesktopFactory, changeHoleDesktopFactory, keyEventsDesktopFactory) {
 
   var backgroundMusic = document.getElementById('background');
   backgroundMusic.playbackRate = 0.5;
@@ -205,18 +205,32 @@ app.controller('DesktopGamesController', ['$scope', '$http', 'pop', 'playAgain',
   var score = document.querySelector('.score');
   var blackHoleLocation = document.querySelector('.blackhole-location')
   var domHoleLocation = document.querySelector('.domHole-location')
+
+  var desktopDomObj = {
+    backgroundMusic: document.getElementById('background'),
+    zap: document.getElementById('zap'),
+    explosion: document.getElementById('kaboom'),
+    boardAlert: document.querySelector('.board-alert'),
+    ball: document.querySelector('.ball'),
+    garden: document.querySelector('.desktop-garden'),
+    output: document.querySelector('.output'),
+    score: document.querySelector('.score'),
+    blackHoleLocation: document.querySelector('.blackhole-location'),
+    domHoleLocation: document.querySelector('.domHole-location')
+  }
+  desktopDomObj.backgroundMusic.playbackRate = 0.5;
   var maxX = garden.clientWidth  - ball.clientWidth;
   var maxY = garden.clientHeight - ball.clientHeight;
   var tempHoleHolder;
-
+  var bombs = [];
+  var point = 1;
+  var x = 0, y = 0;
   var blackHole = {
     x: 90,
     y: 90,
   }
-  trackBlackHole(blackHole);
 
-  var point = 1;
-  var x = 0, y = 0;
+  trackBlackHole(blackHole);
 
   $scope.mouseTrack = function($event){
     y = $event.offsetX;
@@ -226,83 +240,24 @@ app.controller('DesktopGamesController', ['$scope', '$http', 'pop', 'playAgain',
   }
 
   function keyEvents(x, y) {
-    for (var i = 0; i < bombs.length; i++) {
-      var dx = bombs[i][0] - x;
-      var dy = bombs[i][1] - y;
-      var distance = Math.sqrt(dx * dx + dy * dy);
-      if (distance < 9.5 + 9.5) {
-        pop(point);
-        boardAlert.innerHTML='<h4>Game Over</h4>';
-        backgroundMusic.playbackRate -= 100;
-        console.log("TESTING IF STATEMENT");
-        explosion.play();
-      }
-    }
-//blackHole target logic
-    if(blackHole.x == x && blackHole.y == y) {
-      boardAlert.innerHTML='<span> Score! Total: '+ point+' !</span>';
-      score.innerHTML = point;
-      point++;
-      backgroundMusic.playbackRate += 0.1;
-      zap.play();
-      changeHole();
-    }
-
-    ball.style.top  = x + "px";
-    ball.style.left = y + "px";
+    keyEventsDesktopFactory(x, y, bombs, blackHole, ball, boardAlert, point, score, backgroundMusic, changeHoleFn, pop, explosion);
   }
 
   $scope.playAgain = function() {
     playAgain();
   }
 
-  function changeHole() {
+  var changeHoleFn  = function changeHoleDesktop() {
     tempHoleHolder = blackHole;
-    blackHole.x = Math.floor(Math.random()*(10, 380));
-    blackHole.y = Math.floor(Math.random()*(10, 380));
-
-
-    for (var i = 0; i < bombs.length; i++) {
-      var dx = bombs[i][0] - blackHole.x;
-      var dy = bombs[i][1] - blackHole.y;
-      var distance = Math.sqrt(dx * dx + dy * dy);
-      if (distance < 10 + 10) {
-        changeHole();
-      }
-    }
-
-    var hole = document.querySelector('.hole');
-    hole.style.top = blackHole.x + 'px';
-    hole.style.left = blackHole.y + 'px';
-
-    // blackHoleLocation.innerHTML = "blackHole.x : " + blackHole.x + "  blackHole.y : " + blackHole.y;
-    // domHoleLocation.innerHTML = "dom.xCoord : " + xCoord + "  dom.yCoord : " + yCoord;
-    createBomb();
+    changeHoleDesktopFactory(blackHole, bombs, tempHoleHolder);
+    createBombDesktop();
     trackBlackHole(blackHole)
   }
-  var bombs = [];
 
-  function createBomb() {
-    var bombX = Math.floor(Math.random()*(20, 380));
-    var bombY = Math.floor(Math.random()*(20, 380));
-    //safezone doesnt work
-    var xSafeZoneTop = (tempHoleHolder.x -15);
-    var xSafeZoneBottom = (tempHoleHolder.x +15);
-    var ySafeZoneLeft = (tempHoleHolder.y -15);
-    var ySafeZoneRight = (tempHoleHolder.y +15);
-    if(bombX < xSafeZoneTop && bombX > xSafeZoneBottom) createBomb();
-    if(bombY < ySafeZoneLeft && bombY > ySafeZoneRight) createBomb();
-
-    var tempBomb = [];
-    tempBomb.push(bombX,bombY);
-    bombs.push(tempBomb);
-
-    var landmine = "<div class='bomb' style='top:" + bombX+ "px; left:"+ bombY +"px;'></div>";
-    var bomb = document.createElement('div');
-    bomb.innerHTML = landmine;
-    garden.appendChild(bomb);
-    trackBombs(bombs);
+  function createBombDesktop() {
+    createBombDesktopFactory(tempHoleHolder, bombs, garden, trackBombs);
   }
+
   //socket tracker
   var socket = io();
   var trackerObj = {};
@@ -347,8 +302,8 @@ app.controller('WatchController', ['$scope', '$http',  function($scope, $http) {
   var score = document.querySelector('.score');
   var hole = document.querySelector('.hole');
   var playerTwoBall = document.querySelector('.player-two-ball');
+
   var socket = io();
-  var ballX, ballY;
   socket.on('playerMovement', function(data){
     $scope.movement = data;
     ball.style.top  = data.x + "px";
