@@ -4,7 +4,7 @@ app.factory('socketDesktopPlayerMovesFactory', ['$window', function(x, y) {
       var trackerObj = {};
       trackerObj["x"] = x, trackerObj["y"] = y;
         socket.on('playerMovement', function(data){
-          $apply();
+          // $apply();
         })
         socket.emit('tracker', trackerObj);
     }

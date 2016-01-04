@@ -1,2 +1,24 @@
 
-<h1>{{message}}</h1>
+<audio id="background" src="/sounds/backgroundmusic.wav" autoplay="true" loop="true"></audio>
+<audio id="zap" src="/sounds/lazer.wav"></audio>
+<audio id="kaboom" src="/sounds/scream.mp3"></audio>
+<div id="popDiv" class="ontop">
+	<table border="0" id="popup">
+		<tr>
+		<td>
+      <span id="gameOverMsg"></span>
+			<a href="#" ng-click="playAgain()">Play Again</a>
+			</td>
+		</tr>
+	</table>
+</div>
+<div class="board-alert"></div>
+<div class="ticker"><div class="score"></div></div>
+<div class="desktop-container">
+  <div class="desktop-garden">
+    <div class="hole"></div>
+    <div class="ball"></div>
+  </div>
+  <div class="keypad" ng-mousemove="mouseTrack($event)">
+  </div>
+</div>

@@ -8,7 +8,7 @@ app.factory('pop', ['$window', function() {
 app.factory('playAgain', ['$window', function() {
   return function () {
       location.reload(true);
-    }
+    } 
  }]);
 
  app.factory('blinkingDivFactory', ['$window', function(elem){
@@ -23,7 +23,7 @@ app.factory('playAgain', ['$window', function() {
      }
    }
  }]);
-// Specifically for desktop game
+
 app.factory('keyEventsDesktopFactory', ['$window', function(x, y, changeHoleFn, pop, desktopDomObj) {
   return function (x, y, changeHoleFn, pop, desktopDomObj) {
     for (var i = 0; i < desktopDomObj.bombs.length; i++) {
@@ -36,7 +36,7 @@ app.factory('keyEventsDesktopFactory', ['$window', function(x, y, changeHoleFn, 
         desktopDomObj.explosion.play();
       }
     }
-//scoring target logic
+
     if(desktopDomObj.blackHole.x == x && desktopDomObj.blackHole.y == y) {
       desktopDomObj.points++;
       desktopDomObj.boardAlert.innerHTML='<span> Score! Total: '+ desktopDomObj.points+' !</span>';

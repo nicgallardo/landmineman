@@ -1,11 +1,91 @@
 app.controller('IndexController', ['$scope', function($scope) {
 
   }]);
-app.controller('RoomController', ['$scope', function($scope, $route, $routeParams, $location) {
-  $scope.message = "HELLO!";
-  console.log($route);
-  $scope.currentParam = $routeParams;
-  console.log($routeParams);
+app.controller('RoomController', ['$scope', '$http', 'pop', 'playAgain', 'createBombDesktopFactory', 'changeHoleDesktopFactory', 'keyEventsDesktopFactory', 'blinkingDivFactory', 'socketDesktopPlayerMovesFactory', function($scope, $http, pop, playAgain, createBombDesktopFactory, changeHoleDesktopFactory, keyEventsDesktopFactory, blinkingDivFactory, socketDesktopPlayerMovesFactory) {
+
+    var desktopDomObj = {
+      backgroundMusic: document.getElementById('background'),
+      zap: document.getElementById('zap'),
+      explosion: document.getElementById('kaboom'),
+      boardAlert: document.querySelector('.board-alert'),
+      ball: document.querySelector('.ball'),
+      garden: document.querySelector('.desktop-garden'),
+      output: document.querySelector('.output'),
+      score: document.querySelector('.score'),
+      hole: document.querySelector('.hole'),
+      points: 0,
+      tempHoleHolder: null,
+      bombs: [],
+      blackHole: {x:90, y:90}
+    }
+
+    desktopDomObj.backgroundMusic.playbackRate = 0.5;
+    console.log(desktopDomObj.blackHole);
+    trackBlackHole(desktopDomObj.blackHole, $scope);
+    // trackBlackHole(desktopDomObj.blackHole);
+
+    $http.get('/me').then(function(response){
+      $scope.userName = localStorage.getItem("firstName");
+    }, function (err) {
+    })
+
+
+    $scope.mouseTrack = function($event){
+      console.log($event);
+      var y = $event.offsetX;
+      var x = $event.offsetY;
+      keyEvents(x, y)
+      //below is for sockets
+      socketDesktopPlayerMovesFactory(x, y)
+    }
+
+    blinkingDivFactory(desktopDomObj.hole);
+
+    function keyEvents(x, y) {
+      keyEventsDesktopFactory(x, y, changeHoleFn, pop, desktopDomObj);
+    }
+
+    $scope.playAgain = function() {
+      playAgain();
+    }
+
+    var changeHoleFn  = function changeHoleDesktop() {
+      desktopDomObj.tempHoleHolder = desktopDomObj.blackHole;
+      changeHoleDesktopFactory(desktopDomObj);
+      createBombDesktop();
+      trackBlackHole(desktopDomObj.blackHole, $scope)
+    }
+    //find when user enters the room. add them to players array.
+
+
+    function addPlayer() {
+      var socket = io();
+      socket.on('userConnected', function(data){
+
+      })
+    }
+    function createBombDesktop() {
+      createBombDesktopFactory(trackBombs, desktopDomObj);
+    }
+
+    function trackBlackHole(blackHole){
+      var socket = io();
+      socket.on('holeMovement', function(data){
+        $scope.holeMovement = data;
+        console.log("NEW CONNECTION");
+        $scope.$apply();
+      })
+      socket.emit('trackHole', blackHole);
+    }
+
+    function trackBombs(bombsArray) {
+      var socket = io();
+      socket.on('bombsTracked', function(data){
+        $scope.holeMovement = data;
+        $scope.$apply();
+      })
+      socket.emit('trackBombs', bombsArray);
+    }
 
   }]);
 
@@ -237,6 +317,7 @@ app.controller('DesktopGamesController', ['$scope', '$http', 'pop', 'playAgain',
     var socket = io();
     socket.on('holeMovement', function(data){
       $scope.holeMovement = data;
+      console.log("NEW CONNECTION");
       $scope.$apply();
     })
     socket.emit('trackHole', blackHole);
