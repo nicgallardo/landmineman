@@ -1,7 +1,8 @@
 app.controller('IndexController', ['$scope', function($scope) {
 
-  }]);
-app.controller('RoomController', ['$scope', '$http', 'pop', 'playAgain', 'createBombDesktopFactory', 'changeHoleDesktopFactory', 'keyEventsDesktopFactory', 'blinkingDivFactory', 'socketDesktopPlayerMovesFactory', function($scope, $http, pop, playAgain, createBombDesktopFactory, changeHoleDesktopFactory, keyEventsDesktopFactory, blinkingDivFactory, socketDesktopPlayerMovesFactory) {
+}]);
+
+app.controller('RoomController', ['$scope', '$http', 'pop', 'playAgain', 'createBombDesktopFactory', 'changeHoleDesktopFactory', 'keyEventsDesktopFactory', 'blinkingDivFactory', 'socketDesktopPlayerMovesFactory', '$location', function($scope, $http, pop, playAgain, createBombDesktopFactory, changeHoleDesktopFactory, keyEventsDesktopFactory, blinkingDivFactory, socketDesktopPlayerMovesFactory, $location) {
 
     var desktopDomObj = {
       backgroundMusic: document.getElementById('background'),
@@ -20,18 +21,41 @@ app.controller('RoomController', ['$scope', '$http', 'pop', 'playAgain', 'create
     }
 
     desktopDomObj.backgroundMusic.playbackRate = 0.5;
-    console.log(desktopDomObj.blackHole);
     trackBlackHole(desktopDomObj.blackHole, $scope);
-    // trackBlackHole(desktopDomObj.blackHole);
+
+    var roomUrl = $location.$$url.split('/');
+    var roomName = roomUrl[roomUrl.length-1]
+    var socket = io();
+    socket.emit('createRoom', roomName);
+    var getUserName = localStorage.getItem('firstName');
+    socket.emit('addUser', getUserName);
+
+    socket.on('updatechat', function (username) {
+      console.log('updatechat:', username);
+		  $('#conversation').append('<b>'+username + ':</b> ');
+	  });
+
+    socket.emit('trackHole', desktopDomObj.blackHole);
 
     $http.get('/me').then(function(response){
       $scope.userName = localStorage.getItem("firstName");
-    }, function (err) {
+      getAllUsers(response);
     })
+
+    var roomUsers = [];
+    function getAllUsers(userInfo) {
+      roomUsers.push(userInfo.data);
+      $http.post('/api/v1/room-users/' + roomUrl[roomUrl.length-1], roomUsers).
+      success(function(data) {
+          console.log("posted successfully: ", data);
+      }).error(function(data) {
+          console.error("error in posting: ", data);
+      })
+    };
+
 
 
     $scope.mouseTrack = function($event){
-      console.log($event);
       var y = $event.offsetX;
       var x = $event.offsetY;
       keyEvents(x, y)
@@ -57,13 +81,6 @@ app.controller('RoomController', ['$scope', '$http', 'pop', 'playAgain', 'create
     }
     //find when user enters the room. add them to players array.
 
-
-    function addPlayer() {
-      var socket = io();
-      socket.on('userConnected', function(data){
-
-      })
-    }
     function createBombDesktop() {
       createBombDesktopFactory(trackBombs, desktopDomObj);
     }
@@ -72,7 +89,6 @@ app.controller('RoomController', ['$scope', '$http', 'pop', 'playAgain', 'create
       var socket = io();
       socket.on('holeMovement', function(data){
         $scope.holeMovement = data;
-        console.log("NEW CONNECTION");
         $scope.$apply();
       })
       socket.emit('trackHole', blackHole);

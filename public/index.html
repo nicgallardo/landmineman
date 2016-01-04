@@ -16,20 +16,22 @@
     <base href="/">
   </head>
   <body>
-    <a href="/"><img alt="bomb-roller-logo" src="/images/bombroller_logo_nav_sm.png" width="20%"></a>
-    <button id="menu-lower-left"class="mdl-button mdl-js-button mdl-button--icon">
-      <i class="material-icons">more_vert</i>
-    </button>
-    <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="menu-lower-left">
-      <li class="mdl-menu__item"><a href="/">home</a></li>
-      <li class="mdl-menu__item"><a href="/game">play game</a></li>
-      <li class="mdl-menu__item"><a href="/game-desktop">desktop game</a></li>
-      <li class="mdl-menu__item"><a href="/leaders">leaderboard</a></li>
-      <li class="mdl-menu__item"><a href="/desktop-watch">watch!</a></li>
-      <li class="mdl-menu__item" ng-if="userName != undefined"><a href="/logout" target="_self">logout</a></li>
-      <li class="mdl-menu__item" ng-if="userName == undefined"><a href="/auth/facebook" target="_self">facebook login</a></li>
-      <li class="mdl-menu__item"><a href="/about">about</a></li>
-    </ul>
+    <nav ng-controller="NavController">
+      <a href="/"><img alt="bomb-roller-logo" src="/images/bombroller_logo_nav_sm.png" width="20%"></a>
+      <button id="menu-lower-left"class="mdl-button mdl-js-button mdl-button--icon">
+        <i class="material-icons">more_vert</i>
+      </button>
+      <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="menu-lower-left">
+        <li class="mdl-menu__item"><a href="/">home</a></li>
+        <li class="mdl-menu__item"><a href="/game">play game</a></li>
+        <li class="mdl-menu__item"><a href="/game-desktop">desktop game</a></li>
+        <li class="mdl-menu__item"><a href="/leaders">leaderboard</a></li>
+        <li class="mdl-menu__item"><a href="/desktop-watch">watch!</a></li>
+        <li class="mdl-menu__item" ng-if="userName != undefined"><a href="/logout" target="_self">logout</a></li>
+        <li class="mdl-menu__item" ng-if="userName == undefined"><a href="/auth/facebook" target="_self">facebook login</a></li>
+        <li class="mdl-menu__item"><a href="/about">about</a></li>
+      </ul>
+    </nav>
 
     <div ng-view></div>
     <script src="/javascripts/module.js"></script>

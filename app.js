@@ -11,6 +11,7 @@ var session = require('express-session');
 var io = require('socket.io')(app);
 var db = require('monk')('localhost/bombroller-users');
 var users = db.get('users');
+var rooms = db.get('rooms');
 
 require('dotenv').load();
 passport.authenticate();
@@ -50,7 +51,6 @@ passport.use(new FacebookStrategy({
     profileFields: ['id', 'displayName', 'link', 'photos', 'email']
   },
   function(accessToken, refreshToken, profile, done) {
-    console.log("profile:", profile);
     var fullName = profile.displayName.split(" ");
         userFirstName = fullName[0];
         userLastName = fullName[1];
@@ -71,7 +71,6 @@ passport.use(new FacebookStrategy({
           });
         }else{
           users.findOne({fbid: profile.id}).on('success', function (doc) {
-            console.log("doc", doc);
             done(null, { facebookId: profile.id, firstName: userFirstName, lastName: userLastName, token: accessToken });
           });
         }
@@ -83,7 +82,6 @@ passport.use(new FacebookStrategy({
 app.get('/auth/facebook/callback',
   passport.authenticate('facebook', { failureRedirect: '/login' }),
   function(req, res) {
-    console.log("CALLBACK HIT", req);
     res.redirect('/');
 });
 
@@ -105,11 +103,7 @@ passport.deserializeUser(function(obj, done) {
 });
 
 app.use(passport.session());
-//
-// app.use(function(req, res, next){
-//   res.locals.user = req.user
-//   next()
-// })
+
 app.get('/me', function(req, res){
   if (req.user) {
     users.findOne({fbid: req.user.facebookId}).on('success', function(doc){
@@ -126,6 +120,22 @@ app.post('/api/v1/add-point', function (req, res) {
    { $inc: { points: 1} }
   )
   res.redirect('/me');
+});
+
+app.post('/api/v1/room-users/:id', function (req, res) {
+  //TODO need to add logic to make sure multople rooms are not created.
+  // console.log("BODY : ", req.body);
+  // console.log("req : ",req.params.id);
+  rooms.insert({
+    room: req.params.id,
+    users: req.body
+  })
+});
+
+app.get('/api/v1/all-rooms', function(req, res){
+    rooms.find({}).on('success', function(doc){
+      res.json(doc)
+    })
 })
 
 app.use('/', routes);
@@ -156,8 +166,6 @@ if (app.get('env') === 'development') {
   });
 }
 
-// production error handler
-// no stacktraces leaked to user
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error', {
