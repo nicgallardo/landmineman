@@ -39,7 +39,6 @@ app.factory('keyEventsDesktopFactory', ['$window', function(x, y, changeHoleFn, 
 //scoring target logic
     if(desktopDomObj.blackHole.x == x && desktopDomObj.blackHole.y == y) {
       desktopDomObj.points++;
-      console.log("desktopDomObj.test:", desktopDomObj.points);
       desktopDomObj.boardAlert.innerHTML='<span> Score! Total: '+ desktopDomObj.points+' !</span>';
       desktopDomObj.score.innerHTML = desktopDomObj.points;
       desktopDomObj.backgroundMusic.playbackRate += .25;

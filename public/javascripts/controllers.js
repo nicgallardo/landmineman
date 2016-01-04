@@ -1,18 +1,6 @@
 app.controller('IndexController', ['$scope', function($scope) {
 
   }]);
-
-//delete this and the routes and links when complete.
-app.controller('TestController', ['$scope', 'pop', 'playAgain', function($scope, pop, playAgain) {
-  $scope.pop = function(div){
-    pop(div);
-  }
-
-  $scope.playAgain = function(div){
-    playAgain(div);
-  }
-}]);
-
 app.controller('RoomController', ['$scope', function($scope, $route, $routeParams, $location) {
   $scope.message = "HELLO!";
   console.log($route);
