@@ -216,6 +216,7 @@ app.controller('DesktopGamesController', ['$scope', '$http', 'pop', 'playAgain',
   // trackBlackHole(desktopDomObj.blackHole);
 
   $scope.mouseTrack = function($event){
+    console.log($event);
     var y = $event.offsetX;
     var x = $event.offsetY;
     keyEvents(x, y)
