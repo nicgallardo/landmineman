@@ -124,12 +124,17 @@ app.post('/api/v1/add-point', function (req, res) {
   res.redirect('/me');
 });
 
-app.post('/api/v1/bomb/:id', function (req, res) {
+app.get('/api/v1/room-bombs/:id', function(req, res){
+  RoomBomb.findOne({room: req.params.id}).on('success', function(doc){
+    res.json(doc)
+  })
+})
 
+app.post('/api/v1/bomb/:id', function (req, res) {
   var bomb = [];
   bomb.push(Number(req.body.x), Number(req.body.y));
-
   RoomBomb.findOne({room: req.params.id}).on('success', function(doc){
+    console.log(doc);
     if(doc == undefined){
       RoomBomb.insert({
         room: req.params.id,
@@ -137,12 +142,14 @@ app.post('/api/v1/bomb/:id', function (req, res) {
       })
     }else {
       RoomBomb.update(
-       { name: req.params.id },
-       { $push: { bombs: { $each: [bomb]} } }
+       { _id: doc._id },
+       { $addToSet: { bombs: bomb } }
       )
     }
   })
 });
+
+
 
 app.use('/', routes);
 

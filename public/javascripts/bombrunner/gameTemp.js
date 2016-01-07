@@ -99,9 +99,13 @@ BOMBRUNNER.game = {
       });
 
       function detectBombs(bombs) {
+        console.log(bombs);
+        //need to work this out!!!! TODO
+        var bombCoordX = Math.floor(BOMBRUNNER.game.state.gameWindow * bombX);
+        var bombCoordY = Math.floor(BOMBRUNNER.game.state.gameWindow * bombY);
         for (var i = 0; i < bombs.length; i++) {
-          var dx = Math.floor(BOMBRUNNER.game.state.gameWindow * bombs[i][0]) - x;
-          var dy = Math.floor(BOMBRUNNER.game.state.gameWindow * bombs[i][1]) - y;
+          var dx = bombs[i][0] - x;
+          var dy = bombs[i][1] - y;
           var distance = Math.sqrt(dx * dx + dy * dy);
           if (distance < 9.5 + 9.5) {
             document.getElementById('popDiv').style.display = 'block';
