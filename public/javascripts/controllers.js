@@ -2,7 +2,125 @@ app.controller('IndexController', ['$scope', function($scope) {
 
 }]);
 
-app.controller('RoomController', ['$scope', '$http', 'pop', 'playAgain', 'createBombDesktopFactory', 'changeHoleDesktopFactory', 'keyEventsDesktopFactory', 'blinkingDivFactory', 'socketDesktopPlayerMovesFactory', '$location', function($scope, $http, pop, playAgain, createBombDesktopFactory, changeHoleDesktopFactory, keyEventsDesktopFactory, blinkingDivFactory, socketDesktopPlayerMovesFactory, $location) {
+app.controller('MultiplayerController', ['$scope', '$http', '$location', "$swipe", function($scope, $http, $location, $swipe) {
+  var roomUrl = $location.$$url.split('/');
+  var roomName = roomUrl[roomUrl.length-1]
+  var userName = localStorage.getItem('firstName');
+
+  $(document).delegate("body", "scrollstart", false);
+
+  $scope.mouseTrack = function($event){
+    var playerCoord = BOMBRUNNER.game.play.mouseEvents($event);
+    BOMBRUNNER.game.logic.detectCollision(playerCoord);
+    // socket.emit('updateCoord', playerCoord);
+  }
+
+  // function touchTrack() {
+
+    var keypad = $('.keypad');
+
+    $swipe.bind(keypad, {
+      move: function(coords){
+        console.log("move coords: ",coords);
+        var playerCoord = BOMBRUNNER.game.play.mouseEvents(coords);
+        BOMBRUNNER.game.logic.detectCollision(playerCoord);
+      }
+    });
+  // }
+
+    var gameWindow = BOMBRUNNER.game.state.gameWindow;
+      $('.desktop-garden').css({width: gameWindow +'px', height: gameWindow +'px'});
+      $('.keypad').css({width: gameWindow+'px', height: gameWindow+'px'});
+
+  // function postBombs(x, y) {
+  //
+  //   console.log("POSTBOMS HIT", x, y);
+  //   $http.post('/api/v1/bomb', {x:x,y:y}).
+  //   success(function(data) {
+  //       console.log("HIT SUCCESS");
+  //       console.log("posted successfully: ", data);
+  //   }).error(function(data) {
+  //     console.log("HIT ERROR");
+  //       console.error("error in posting: ", data);
+  //   })
+  // }
+
+//sockets
+  var socket = io();
+  socket.emit('createRoom', roomName);
+  socket.emit('addUser', userName);
+//
+//
+//   socket.on('passAllUserInfo', function (sprite) {
+//     socketUser = document.createElement("div");
+//     socketUser.setAttribute("class", "ball");
+//     socketUser.setAttribute("id", sprite.id);
+//     socketUser.style.background = sprite.color;
+//     desktopDomObj.garden.appendChild(socketUser);
+//     userSprite.id = sprite.id;
+//     $('.users-in-room').append('<b>user: '+ sprite.id + ' user color:'+ sprite.color + '</b> ');
+//   });
+//
+//   socket.on('playerCoordPass', function(coord){
+//     $scope.$apply();
+//     socketCoordPass(coord.x, coord.y);
+//   })
+// //gameplay > rules
+//   function socketCoordPass(x, y) {
+//     var usersSocket = document.getElementById(userSprite.id)
+//     usersSocket.style.top = x + "px";
+//     usersSocket.style.left = y + "px";
+//   }
+
+//users
+  // function addUserElem(userName) {
+  //   usersBall = document.createElement("div");
+  //   usersBall.setAttribute("id", userName);
+  //   usersBall.style.top = "40px";
+  //   usersBall.style.left = "40px";
+  //   usersBall.style.position = "absolute";
+  //   usersBall.style.width = "20px";
+  //   usersBall.style.height = "20px";
+  //   usersBall.style.background = "#fff";
+  //   usersBall.style.borderRadius = "100%";
+  //   desktopDomObj.garden.appendChild(usersBall);
+  //   desktopDomObj[userName] = usersBall;
+  // }
+  //
+  // socket.on('roomDesktopPlayerMovementData', function (data){
+  //   desktopDomObj.ball.style.top  = data.x + "px";
+  //   desktopDomObj.ball.style.left = data.y+ "px";
+  //   $scope.$apply();
+  // })
+
+}]);
+
+
+
+
+
+
+
+
+
+
+
+
+
+//
+//
+//
+// app.service("socket", function(){
+//   return io();
+// })
+//
+
+
+
+
+
+
+app.controller('RoomController', ['$scope', '$http', 'pop', 'playAgain', 'createBombDesktopFactory', 'changeHoleDesktopFactory', 'keyEventsDesktopFactory', 'blinkingDivFactory', 'socketDesktopPlayerMovesFactory', '$location', 'roomsDesktopPlayerMovesFactory', function($scope, $http, pop, playAgain, createBombDesktopFactory, changeHoleDesktopFactory, keyEventsDesktopFactory, blinkingDivFactory, socketDesktopPlayerMovesFactory, $location, roomsDesktopPlayerMovesFactory) {
 
     var desktopDomObj = {
       backgroundMusic: document.getElementById('background'),
@@ -22,51 +140,63 @@ app.controller('RoomController', ['$scope', '$http', 'pop', 'playAgain', 'create
 
     desktopDomObj.backgroundMusic.playbackRate = 0.5;
     trackBlackHole(desktopDomObj.blackHole, $scope);
+    $scope.blackHole = desktopDomObj.blackHole;
 
     var roomUrl = $location.$$url.split('/');
     var roomName = roomUrl[roomUrl.length-1]
+
     var socket = io();
+
     socket.emit('createRoom', roomName);
     var getUserName = localStorage.getItem('firstName');
     socket.emit('addUser', getUserName);
 
     socket.on('updatechat', function (username) {
-      console.log('updatechat:', username);
 		  $('#conversation').append('<b>'+username + ':</b> ');
+      addUserElem(username);
 	  });
 
-    socket.emit('trackHole', desktopDomObj.blackHole);
+    addUserElem(getUserName)
 
-    $http.get('/me').then(function(response){
-      $scope.userName = localStorage.getItem("firstName");
-      getAllUsers(response);
+
+    var usersBall;
+    var allUsers;
+    function addUserElem(userName) {
+      usersBall = document.createElement("div");
+      usersBall.setAttribute("id", userName);
+      usersBall.style.top = "40px";
+      usersBall.style.left = "40px";
+      usersBall.style.position = "absolute";
+      usersBall.style.width = "20px";
+      usersBall.style.height = "20px";
+      usersBall.style.background = "#fff";
+      usersBall.style.borderRadius = "100%";
+      desktopDomObj.garden.appendChild(usersBall);
+      desktopDomObj[userName] = usersBall;
+    }
+
+    socket.on('roomDesktopPlayerMovementData', function (data){
+      desktopDomObj.ball.style.top  = data.x + "px";
+      desktopDomObj.ball.style.left = data.y+ "px";
+      $scope.$apply();
     })
 
-    var roomUsers = [];
-    function getAllUsers(userInfo) {
-      roomUsers.push(userInfo.data);
-      $http.post('/api/v1/room-users/' + roomUrl[roomUrl.length-1], roomUsers).
-      success(function(data) {
-          console.log("posted successfully: ", data);
-      }).error(function(data) {
-          console.error("error in posting: ", data);
-      })
-    };
-
-
+    socket.emit('trackHole', desktopDomObj.blackHole);
 
     $scope.mouseTrack = function($event){
       var y = $event.offsetX;
       var x = $event.offsetY;
+      $scope.playerX = x;
+      $scope.playerY = y;
+
       keyEvents(x, y)
-      //below is for sockets
-      socketDesktopPlayerMovesFactory(x, y)
+      roomsDesktopPlayerMovesFactory(x, y)
     }
 
     blinkingDivFactory(desktopDomObj.hole);
 
     function keyEvents(x, y) {
-      keyEventsDesktopFactory(x, y, changeHoleFn, pop, desktopDomObj);
+      keyEventsDesktopFactory(x, y, changeHoleFn, pop, desktopDomObj, getUserName, allUsers);
     }
 
     $scope.playAgain = function() {
@@ -79,7 +209,6 @@ app.controller('RoomController', ['$scope', '$http', 'pop', 'playAgain', 'create
       createBombDesktop();
       trackBlackHole(desktopDomObj.blackHole, $scope)
     }
-    //find when user enters the room. add them to players array.
 
     function createBombDesktop() {
       createBombDesktopFactory(trackBombs, desktopDomObj);

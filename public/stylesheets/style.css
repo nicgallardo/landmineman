@@ -8,6 +8,16 @@ a {
   color: #00B7FF;
 }
 
+.ball {
+  position: absolute;
+  top   : 90px;
+  left  : 90px;
+  width : 20px;
+  height: 20px;
+  background-color: orange;
+  border-radius: 100%;
+}
+
 #OVER{
   width:100%;
   height:100%;
@@ -70,12 +80,12 @@ a {
   background-color: #e6e6e6;
 }
 /*Game Logic Below*/
-.ticker {
+/*.ticker {
   width: 800px;
   height: 50px;
   background: green;
   font-family: 'Orbitron', sans-serif;
-}
+}*/
 .garden {
   position: relative !important;
   width : 200px !important;
@@ -87,9 +97,9 @@ a {
 }
 
 .desktop-garden {
-  position: relative !important;
-  width : 400px !important;
-  height: 400px !important;
+  position: relative;
+  width : 400px;
+  height: 400px;
   /*background: #e6af4b !important;*/
   background-image: url('/images/garden-background.jpg');
   float: left;
@@ -104,27 +114,6 @@ a {
   width: 400px;
   background-color: #999933;
   float: left;
-}
-
-.ball {
-  position: absolute;
-  top   : 90px;
-  left  : 90px;
-  width : 20px;
-  height: 20px;
-  background: #334431;
-  background-image: url('/images/head.png');
-  border-radius: 100%;
-}
-
-.player-two-ball {
-  position: absolute;
-  top   : 90px;
-  left  : 90px;
-  width : 20px;
-  height: 20px;
-  background: blue;
-  border-radius: 100%;
 }
 
 .hole {

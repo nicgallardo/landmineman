@@ -11,7 +11,8 @@ var session = require('express-session');
 var io = require('socket.io')(app);
 var db = require('monk')('localhost/bombroller-users');
 var users = db.get('users');
-var rooms = db.get('rooms');
+var RoomBomb = db.get('roomBomb');
+
 
 require('dotenv').load();
 passport.authenticate();
@@ -51,15 +52,15 @@ passport.use(new FacebookStrategy({
     profileFields: ['id', 'displayName', 'link', 'photos', 'email']
   },
   function(accessToken, refreshToken, profile, done) {
-    var fullName = profile.displayName.split(" ");
-        userFirstName = fullName[0];
-        userLastName = fullName[1];
-        userFBid = profile.id;
-
-
-    var userPhoto = profile.photos[0].value;
+    console.log("profile hit",profile);
+    var fullName = profile.displayName.split(" "),
+        userFirstName = fullName[0],
+        userLastName = fullName[1],
+        userFBid = profile.id,
+        userPhoto = profile.photos[0].value;
     users.findOne({ fbid: profile.id}).then(function(user){
         if(user == null){
+          // console.log("USER : ", user);
           users.insert({
             fbid: profile.id,
             firstname: userFirstName,
@@ -82,6 +83,7 @@ passport.use(new FacebookStrategy({
 app.get('/auth/facebook/callback',
   passport.authenticate('facebook', { failureRedirect: '/login' }),
   function(req, res) {
+    console.log("callback hit", res.query);
     res.redirect('/');
 });
 
@@ -122,21 +124,25 @@ app.post('/api/v1/add-point', function (req, res) {
   res.redirect('/me');
 });
 
-app.post('/api/v1/room-users/:id', function (req, res) {
-  //TODO need to add logic to make sure multople rooms are not created.
-  // console.log("BODY : ", req.body);
-  // console.log("req : ",req.params.id);
-  rooms.insert({
-    room: req.params.id,
-    users: req.body
+app.post('/api/v1/bomb/:id', function (req, res) {
+
+  var bomb = [];
+  bomb.push(Number(req.body.x), Number(req.body.y));
+
+  RoomBomb.findOne({room: req.params.id}).on('success', function(doc){
+    if(doc == undefined){
+      RoomBomb.insert({
+        room: req.params.id,
+        bombs: [bomb]
+      })
+    }else {
+      RoomBomb.update(
+       { name: req.params.id },
+       { $push: { bombs: { $each: [bomb]} } }
+      )
+    }
   })
 });
-
-app.get('/api/v1/all-rooms', function(req, res){
-    rooms.find({}).on('success', function(doc){
-      res.json(doc)
-    })
-})
 
 app.use('/', routes);
 

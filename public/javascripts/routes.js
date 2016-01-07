@@ -28,6 +28,10 @@ app.config(function($routeProvider, $locationProvider){
         templateUrl: 'partials/room.html',
         controller: 'RoomController'
       })
+      .when('/multiplayer/:id', {
+        templateUrl: 'partials/multiplayer.html',
+        controller: 'MultiplayerController'
+      })
       .otherwise({redirectTo:'/'});
       $locationProvider.html5Mode(true);
   })

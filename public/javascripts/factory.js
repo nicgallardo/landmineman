@@ -8,7 +8,7 @@ app.factory('pop', ['$window', function() {
 app.factory('playAgain', ['$window', function() {
   return function () {
       location.reload(true);
-    } 
+    }
  }]);
 
  app.factory('blinkingDivFactory', ['$window', function(elem){
@@ -24,49 +24,10 @@ app.factory('playAgain', ['$window', function() {
    }
  }]);
 
-app.factory('keyEventsDesktopFactory', ['$window', function(x, y, changeHoleFn, pop, desktopDomObj) {
-  return function (x, y, changeHoleFn, pop, desktopDomObj) {
-    for (var i = 0; i < desktopDomObj.bombs.length; i++) {
-      var dx = desktopDomObj.bombs[i][0] - x;
-      var dy = desktopDomObj.bombs[i][1] - y;
-      var distance = Math.sqrt(dx * dx + dy * dy);
-      if (distance < 9.5 + 9.5) {
-        pop(desktopDomObj.points);
-        desktopDomObj.backgroundMusic.playbackRate -= 100;
-        desktopDomObj.explosion.play();
-      }
-    }
-
-    if(desktopDomObj.blackHole.x == x && desktopDomObj.blackHole.y == y) {
-      desktopDomObj.points++;
-      desktopDomObj.boardAlert.innerHTML='<span> Score! Total: '+ desktopDomObj.points+' !</span>';
-      desktopDomObj.score.innerHTML = desktopDomObj.points;
-      desktopDomObj.backgroundMusic.playbackRate += .25;
-      zap.play();
-      changeHoleFn();
-    }
-
-    desktopDomObj.ball.style.top  = x + "px";
-    desktopDomObj.ball.style.left = y + "px";
-    }
+app.factory('keyEventsDesktopFactory', ['$window', function(x, y, changeHoleFn, pop, desktopDomObj, getUserName) {
+  return BOMBRUNNER.game.logic.detectExplosion(x, y, changeHoleFn, pop, desktopDomObj, getUserName);
 }]);
 
-app.factory('changeHoleDesktopFactory', ['$window', function(desktopDomObj) {
-  return function (desktopDomObj) {
-    desktopDomObj.blackHole.x = Math.floor(Math.random()*(10, 380));
-    desktopDomObj.blackHole.y = Math.floor(Math.random()*(10, 380));
-    for (var i = 0; i < desktopDomObj.bombs.length; i++) {
-      var dx = desktopDomObj.bombs[i][0] - desktopDomObj.blackHole.x;
-      var dy = desktopDomObj.bombs[i][1] - desktopDomObj.blackHole.y;
-      var distance = Math.sqrt(dx * dx + dy * dy);
-      if (distance < 10 + 10) {
-        changeHoleDesktop();
-      }
-    }
-    desktopDomObj.hole.style.top = desktopDomObj.blackHole.x + 'px';
-    desktopDomObj.hole.style.left = desktopDomObj.blackHole.y + 'px';
-    }
-}]);
 
 
 
