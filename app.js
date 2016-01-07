@@ -12,6 +12,7 @@ var io = require('socket.io')(app);
 var db = require('monk')('localhost/bombroller-users');
 var users = db.get('users');
 var RoomBomb = db.get('roomBomb');
+var RoomHole = db.get('roomHole')
 
 
 require('dotenv').load();
@@ -134,7 +135,6 @@ app.post('/api/v1/bomb/:id', function (req, res) {
   var bomb = [];
   bomb.push(Number(req.body.x), Number(req.body.y));
   RoomBomb.findOne({room: req.params.id}).on('success', function(doc){
-    console.log(doc);
     if(doc == undefined){
       RoomBomb.insert({
         room: req.params.id,
@@ -149,6 +149,30 @@ app.post('/api/v1/bomb/:id', function (req, res) {
   })
 });
 
+app.get('/api/v1/room-hole/:id', function(req, res){
+  RoomHole.findOne({room: req.params.id}).on('success', function(doc){
+    res.json(doc)
+  })
+})
+
+app.post('/api/v1/hole-move/:id', function(req, res){
+  console.log(req.body.x);
+  console.log(req.body.y);
+  RoomHole.findOne({room: req.params.id}).on('success', function(doc){
+    console.log(doc);
+    if(doc == undefined){
+      RoomHole.insert({
+        room: req.params.id,
+        hole: { x: req.body.x, y: req.body.y }
+      })
+    }else {
+      RoomBomb.update(
+       { _id: doc._id },
+       { hole: {x:req.body.x, y: req.body.y} }
+      )
+    }
+  })
+})
 
 
 app.use('/', routes);
